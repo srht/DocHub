@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DocHub.Core.Entities
+namespace DocHub.Common.DTO
 {
-    public class Tag
+    public class TagDto
     {
-        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
     }

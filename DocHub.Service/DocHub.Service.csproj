@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DocHub.Common\DocHub.Common.csproj" />
+    <ProjectReference Include="..\DocHub.Core\DocHub.Core.csproj" />
+    <ProjectReference Include="..\DocHub.Data\DocHub.Data.csproj" />
+  </ItemGroup>
+
 </Project>

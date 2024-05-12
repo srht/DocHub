@@ -11,9 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocHub.Common", "DocHub.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocHub.Service", "DocHub.Service\DocHub.Service.csproj", "{E232DCBD-008E-4EA7-A2C3-003AD2FB8A88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocHub.WebApp", "DocHub.WebApp\DocHub.WebApp.csproj", "{0D892799-6D62-4976-889F-E733CEB27CCB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocHub.WebApi", "DocHub.WebApi\DocHub.WebApi.csproj", "{CEC58760-1718-4DC8-B2D4-1C770C89AC9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocHub.WebApi", "DocHub.WebApi\DocHub.WebApi.csproj", "{CEC58760-1718-4DC8-B2D4-1C770C89AC9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +35,6 @@ Global
 		{E232DCBD-008E-4EA7-A2C3-003AD2FB8A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E232DCBD-008E-4EA7-A2C3-003AD2FB8A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E232DCBD-008E-4EA7-A2C3-003AD2FB8A88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D892799-6D62-4976-889F-E733CEB27CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D892799-6D62-4976-889F-E733CEB27CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D892799-6D62-4976-889F-E733CEB27CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D892799-6D62-4976-889F-E733CEB27CCB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEC58760-1718-4DC8-B2D4-1C770C89AC9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CEC58760-1718-4DC8-B2D4-1C770C89AC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEC58760-1718-4DC8-B2D4-1C770C89AC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU

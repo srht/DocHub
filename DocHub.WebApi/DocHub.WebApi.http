@@ -1,6 +1,10 @@
-@DocHub.WebApi_HostAddress = http://localhost:5289
+@DocHub.WebApi_HostAddress = http://localhost:7251
 
 GET {{DocHub.WebApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+
+POST {{DocHub.WebApi_HostAddress}}/api/documents
+Accept: application/json

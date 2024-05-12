@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DocHub.Core.Enums
+namespace DocHub.Common.Enums
 {
     public enum DocumentTypes
     {
