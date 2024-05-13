@@ -14,6 +14,20 @@ namespace DocHub.Data.Repositories
     {
         public DocumentRepository(DocHubDbContext docHubDbContext) : base(docHubDbContext)
         {
+            DocHubDbContext = docHubDbContext;
+        }
+
+        public DocHubDbContext DocHubDbContext { get; }
+
+        public IEnumerable<DDocument> GetList(params string[] includes)
+        {
+            var listQuery = Dbset.AsQueryable();
+            foreach (string include in includes)
+            {
+                listQuery = listQuery.Include(include);
+            }
+
+            return listQuery.ToList();
         }
 
         public override void SoftDelete(Guid id)
@@ -35,5 +49,12 @@ namespace DocHub.Data.Repositories
             Dbset.Update(obj);
             Commit();
         }
+
+        public void PatchDocument(DDocument obj)
+        {
+            Commit();
+        }
+
+
     }
 }

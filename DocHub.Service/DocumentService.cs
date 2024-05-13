@@ -60,7 +60,7 @@ namespace DocHub.Service
 
         public List<DocumentDto> GetDocuments()
         {
-            var documents = DocumentRepository.GetList().Select(documentDb => new DocumentDto
+            var documents = DocumentRepository.GetList("Tags").Select(documentDb => new DocumentDto
             {
                 Id=documentDb.Id,
                 Title=documentDb.Title,
@@ -74,17 +74,21 @@ namespace DocHub.Service
 
             return documents;
         }
-    public void UpdateDocument(DocumentDto documentDto)
+
+
+        public void UpdateDocument(DocumentDto documentDto)
         {
-            var documentDb = new DDocument();
-            documentDb.Id = documentDto.Id;
+            var documentDb = DocumentRepository.GetObjectById(documentDto.Id);
+            if(!string.IsNullOrEmpty(documentDto.Title))
             documentDb.Title=documentDto.Title;
-            documentDb.UpdatedAt = documentDto.UpdatedAt;
+            documentDb.UpdatedAt = DateTime.Now;
             documentDb.DocumentType = documentDto.DocumentType.HasValue? documentDto.DocumentType.Value:DocumentTypes.Text;
-            documentDb.Description = documentDto.Description;
-            documentDb.FilePath = documentDto.FilePath;
-            documentDb.CreatedAt = documentDto.CreatedAt;
-            documentDb.Tags = documentDto.Tags?.Select(i => new Tag { Id = i.Id, Name = i.Name })?.ToList();
+            if (!string.IsNullOrEmpty(documentDto.Description))
+                documentDb.Description = documentDto.Description;
+            if (!string.IsNullOrEmpty(documentDto.FilePath))
+                documentDb.FilePath = documentDto.FilePath;
+            if (documentDto.Tags != null && documentDto.Tags.Any())
+                documentDb.Tags = documentDto?.Tags?.Select(i => new Tag { Id = i.Id, Name = i.Name }).ToList();
             DocumentRepository.Update(documentDb);
         }
     }

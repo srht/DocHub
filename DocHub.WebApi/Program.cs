@@ -18,6 +18,7 @@ builder.Services.AddDbContext<DocHubDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString")));
 builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();
 builder.Services.AddScoped<IDocumentsService, DocumentService>();
+builder.Services.AddSingleton<IFileStoreService>(fileService=>new FileStoreService(builder.Environment.WebRootPath));
 builder.Services.AddControllers();
 
 var app = builder.Build();
