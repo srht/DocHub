@@ -16,9 +16,9 @@ namespace DocHub.Service
             WebRootPath = webRootPath;
         }
 
-        public string WebRootPath { get; }
-        public string TempDir { get; } = "Upload\\temp";
-        public string TempPath { get; } = "/Upload/files/";
+        public string WebRootPath { get; set; }
+        public string TempDir { get; } = "wwwroot\\Upload\\temp";
+        public string TempPath { get; } = "/Upload/temp/";
 
         public async Task<string> SaveFileAsync(FileStoreObject fileStoreObject)
         {
@@ -37,6 +37,7 @@ namespace DocHub.Service
 
             string path = Path.Combine(WebRootPath, TempDir, fileName);
             bool isImageFile = CheckIfImageFile(extension);
+            /*
             if (isImageFile)
             {
                 var pathImageBuilt = Path.Combine(WebRootPath, TempDir + "\\images");
@@ -56,12 +57,13 @@ namespace DocHub.Service
 
                     image.Save(pathImage); // Automatic encoder selected based on extension.
                 }
-                */
+                
 
 
                 return TempPath + "images/" + fileName;
             }
             else
+        */
             {
                 using (var stream = new FileStream(path, FileMode.Create))
                 {

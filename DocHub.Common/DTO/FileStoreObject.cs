@@ -9,6 +9,10 @@ namespace DocHub.Common.DTO
 {
     public class FileStoreObject
     {
+        public FileStoreObject(IFormFile formFile)
+        {
+            FileObject = formFile;
+        }
         public IFormFile FileObject { get; set; }
     }
 }

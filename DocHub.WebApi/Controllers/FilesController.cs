@@ -19,8 +19,9 @@ namespace DocHub.WebApi.Controllers
         public IFileStoreService FileStoreService { get; }
 
         [HttpPost]
-        public async Task<FileUploadResult> Post(FileStoreObject fileStoreObject)
+        public async Task<FileUploadResult> Post([FromForm]IFormFile file)
         {
+            FileStoreObject fileStoreObject = new(file);
             string url = await FileStoreService.SaveFileAsync(fileStoreObject);
             return new FileUploadResult { UploadedFilePath = url };
         }
