@@ -60,7 +60,7 @@ namespace DocHub.Service
 
         public List<DocumentDto> GetDocuments()
         {
-            var documents = DocumentRepository.GetList("Tags").Select(documentDb => new DocumentDto
+            var documents = DocumentRepository.GetList("Tags").Where(i=>!i.IsDeleted).Select(documentDb => new DocumentDto
             {
                 Id=documentDb.Id,
                 Title=documentDb.Title,

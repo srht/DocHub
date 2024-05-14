@@ -1,11 +1,18 @@
+using DocHub.Core.Entities;
 using DocHub.Data;
 using DocHub.Data.Abstracts;
 using DocHub.Data.Repositories;
 using DocHub.Service;
 using DocHub.Service.Abstracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System;
+using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +24,47 @@ builder.Services.AddLogging(loggingBuilder=>
                             loggingBuilder.AddSerilog(dispose:true));
 builder.Services.AddDbContext<DocHubDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString")));
+builder.Services.AddDbContext<AuthorizationDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("AuthorizatinoConnectionString")));
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AuthorizationDbContext>();
+// These will eventually be moved to a secrets file, but for alpha development appsettings is fine
+var validIssuer = builder.Configuration.GetValue<string>("JwtTokenSettings:ValidIssuer");
+var validAudience = builder.Configuration.GetValue<string>("JwtTokenSettings:ValidAudience");
+var symmetricSecurityKey = builder.Configuration.GetValue<string>("JwtTokenSettings:SymmetricSecurityKey");
+
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.IncludeErrorDetails = true;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ClockSkew = TimeSpan.Zero,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = validIssuer,
+            ValidAudience = validAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(symmetricSecurityKey)
+            ),
+        };
+    });
 builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();
 builder.Services.AddScoped<IDocumentsService, DocumentService>();
 builder.Services.AddSingleton<IFileStoreService>(fileService=>new FileStoreService(Directory.GetCurrentDirectory()));
@@ -31,7 +79,11 @@ builder.Services.AddCors(options =>
                           policy.AllowAnyOrigin();
                       });
 });
-builder.Services.AddControllers();
+
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+}); 
 
 var app = builder.Build();
 
@@ -42,6 +94,8 @@ app.UseHttpsRedirection();
 app.UseCors("MyAllowSpecificOrigins");
 
 app.UseStaticFiles();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
