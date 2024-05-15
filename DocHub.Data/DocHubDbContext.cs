@@ -11,7 +11,7 @@ namespace DocHub.Data
 {
     public class DocHubDbContext:DbContext
     {
-        public DocHubDbContext(DbContextOptions dbContextOptions):base(dbContextOptions)
+        public DocHubDbContext(DbContextOptions<DocHubDbContext> dbContextOptions):base(dbContextOptions)
         {
             
         }

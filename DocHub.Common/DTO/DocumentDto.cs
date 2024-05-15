@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DocHub.Common.DTO
 {
-    public class DocumentDto
+    public class DocumentDto:IDataTransfer
     {
         public Guid Id { get; set; }
         public string? Title { get; set; }

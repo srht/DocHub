@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocHub.Common.DTO
 {
-    public class TagDto:IDataTransfer
+    public class IDataTransfer
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

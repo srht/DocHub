@@ -1,6 +1,8 @@
 ﻿using DocHub.Common.DTO;
+using DocHub.Common.DTO.Users;
 using DocHub.Common.Enums;
 using DocHub.Service.Abstracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,7 @@ namespace DocHub.WebApi.Controllers
             DocumentsService = documentsService;
         }
         // GET: api/<DocumentsController>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IEnumerable<DocumentDto>> Get()
         {

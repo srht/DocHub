@@ -1,9 +1,11 @@
-using DocHub.Core.Entities;
+using DocHub.Core.Entities.Users;
 using DocHub.Data;
 using DocHub.Data.Abstracts;
 using DocHub.Data.Repositories;
 using DocHub.Service;
 using DocHub.Service.Abstracts;
+using DocHub.Service.Abstracts.Users;
+using DocHub.Service.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +27,8 @@ builder.Services.AddLogging(loggingBuilder=>
 builder.Services.AddDbContext<DocHubDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString")));
 builder.Services.AddDbContext<AuthorizationDbContext>(options =>
-           options.UseSqlServer(builder.Configuration.GetConnectionString("AuthorizatinoConnectionString")));
-builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString")));
+builder.Services.AddIdentity<ApplicationUser,IdentityRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
@@ -65,8 +66,11 @@ builder.Services.AddAuthentication(options => {
             ),
         };
     });
+builder.Services.AddScoped<IUsersRepository,UsersRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();
 builder.Services.AddScoped<IDocumentsService, DocumentService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddSingleton<IFileStoreService>(fileService=>new FileStoreService(Directory.GetCurrentDirectory()));
 builder.Services.AddCors(options =>
 {

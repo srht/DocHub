@@ -1,5 +1,9 @@
-﻿using DocHub.Core.Entities;
+﻿using DocHub.Common.DTO.Users;
+using DocHub.Common.DTO.UserService;
+using DocHub.Common.ResultModels;
 using DocHub.Data;
+using DocHub.Service.Abstracts.Users;
+using DocHub.Service.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,35 +11,28 @@ using System.Data;
 
 namespace DocHub.WebApi.Controllers
 {
-    https://markjames.dev/blog/jwt-authorization-asp-net-core
+    //https://markjames.dev/blog/jwt-authorization-asp-net-core
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly AuthorizationDbContext _context;
-        private readonly TokenService _tokenService;
+        public IUserService UserService { get; }
 
-        public UsersController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, TokenService tokenService, ILogger<UsersController> logger)
+        public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
-            _userManager = userManager;
-            _context = context;
-            _tokenService = tokenService;
+            UserService = userService;
         }
 
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(RegistrationRequest request)
+        public async Task<IActionResult> Register(RegisterDto request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _userManager.CreateAsync(
-                new ApplicationUser { UserName = request.Username, Email = request.Email, Role = Role.User },
-                request.Password!
-            );
+            var result = await UserService.CreateUser(request);
 
             if (result.Succeeded)
             {
@@ -54,41 +51,16 @@ namespace DocHub.WebApi.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<AuthResponse>> Authenticate([FromBody] AuthRequest request)
+        public async Task<ActionResult<AuthResponseModel>> Authenticate([FromBody] AuthRequestDto request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var managedUser = await _userManager.FindByEmailAsync(request.Email!);
-            if (managedUser == null)
-            {
-                return BadRequest("Bad credentials");
-            }
+           var authResult=await UserService.Authenticate(request);
 
-            var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password!);
-            if (!isPasswordValid)
-            {
-                return BadRequest("Bad credentials");
-            }
-
-            var userInDb = _context.Users.FirstOrDefault(u => u.Email == request.Email);
-
-            if (userInDb is null)
-            {
-                return Unauthorized();
-            }
-
-            var accessToken = _tokenService.CreateToken(userInDb);
-            await _context.SaveChangesAsync();
-
-            return Ok(new AuthResponse
-            {
-                Username = userInDb.UserName,
-                Email = userInDb.Email,
-                Token = accessToken,
-            });
+            return Ok(authResult);
         }
     }
 }

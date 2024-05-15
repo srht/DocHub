@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DocHub.Common.DTO
 {
-    public class FileStoreObject
+    public class FileStoreObject:IDataTransfer
     {
         public FileStoreObject(IFormFile formFile)
         {
