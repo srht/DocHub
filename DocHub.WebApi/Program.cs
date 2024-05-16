@@ -77,10 +77,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "MyAllowSpecificOrigins",
                       policy =>
                       {
-                          //policy.WithOrigins("http://localhost:4200");
+                          //policy.WithOrigins("http://localhost:4200"); // ---> cookie token
                           policy.AllowAnyHeader();
                           policy.AllowAnyMethod();
                           policy.AllowAnyOrigin();
+                          //policy.AllowCredentials(); --> cookie token
                       });
 });
 

@@ -59,7 +59,14 @@ namespace DocHub.WebApi.Controllers
             }
 
            var authResult=await UserService.Authenticate(request);
-
+            var cookieOptions = new CookieOptions
+            {
+                SameSite = SameSiteMode.Strict,
+                HttpOnly = true,
+                Secure = true
+            };
+            HttpContext.Response.Cookies.Append("token", authResult.Token, cookieOptions);
+            //authResult.Token = "";
             return Ok(authResult);
         }
     }
