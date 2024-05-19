@@ -9,7 +9,7 @@ namespace DocHub.Common.DTO
     public class CategoryDto:IDataTransfer
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public List<CategoryDto>? SubCategories { get; set; }
         public CategoryDto? Parent { get; set; }
     }

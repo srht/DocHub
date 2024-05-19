@@ -10,7 +10,7 @@ namespace DocHub.Common.DTO
 {
     public class DocumentDto:IDataTransfer
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? FilePath { get; set; }
@@ -19,5 +19,6 @@ namespace DocHub.Common.DTO
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public List<TagDto>? Tags { get; set; }
+        public List<CategoryDto>? Categories { get; set; }
     }
 }

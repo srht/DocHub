@@ -15,12 +15,14 @@ namespace DocHub.Service
 {
     public class DocumentService : IDocumentsService
     {
-        public DocumentService(IDocumentRepository documentRepository)
+        public DocumentService(IDocumentRepository documentRepository, ICategoriesRepository categoriesRepository)
         {
             DocumentRepository = documentRepository;
+            CategoriesRepository = categoriesRepository;
         }
 
         public IDocumentRepository DocumentRepository { get; }
+        public ICategoriesRepository CategoriesRepository { get; }
         public ILogger Logger { get; }
 
         public void AddDocument(DocumentDto documentDto)
@@ -60,7 +62,7 @@ namespace DocHub.Service
 
         public List<DocumentDto> GetDocuments()
         {
-            var documents = DocumentRepository.GetList("Tags").Where(i=>!i.IsDeleted).Select(documentDb => new DocumentDto
+            var documents = DocumentRepository.GetList("Tags","Categories").Where(i=>!i.IsDeleted).Select(documentDb => new DocumentDto
             {
                 Id=documentDb.Id,
                 Title=documentDb.Title,
@@ -69,7 +71,8 @@ namespace DocHub.Service
                 Description = documentDb.Description,
                 FilePath = documentDb.FilePath,
                 CreatedAt = documentDb.CreatedAt,
-                Tags = documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList()
+                Tags = documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList(),
+                Categories = documentDb.Categories?.Select(i => new CategoryDto { Id = i.Id, Name = i.Name })?.ToList(),
             }).ToList();
 
             return documents;
@@ -78,7 +81,13 @@ namespace DocHub.Service
 
         public void UpdateDocument(DocumentDto documentDto)
         {
-            var documentDb = DocumentRepository.GetObjectById(documentDto.Id);
+            if (documentDto == null || documentDto.Id==null)
+                throw new Exception("No document passed to update");
+
+            var documentDb = DocumentRepository.GetObjectById(documentDto.Id.Value);
+            if (documentDb == null)
+                throw new Exception("Document not found with document id: " + documentDto.Id);
+
             if(!string.IsNullOrEmpty(documentDto.Title))
             documentDb.Title=documentDto.Title;
             documentDb.UpdatedAt = DateTime.Now;
@@ -89,6 +98,17 @@ namespace DocHub.Service
                 documentDb.FilePath = documentDto.FilePath;
             if (documentDto.Tags != null && documentDto.Tags.Any())
                 documentDb.Tags = documentDto?.Tags?.Select(i => new Tag { Id = i.Id, Name = i.Name }).ToList();
+            
+            if (documentDto.Categories != null && documentDto.Categories.Any()) {
+                var broughtCategories = documentDto.Categories;
+                foreach (var c in broughtCategories)
+                {
+                    var categoryDb = CategoriesRepository.GetObjectByIntId(c.Id);
+                    if(categoryDb!=null)
+                    documentDb.Categories.Add(categoryDb);
+                }
+            }
+
             DocumentRepository.Update(documentDb);
         }
     }

@@ -21,7 +21,7 @@ namespace DocHub.WebApi.Controllers
             DocumentsService = documentsService;
         }
         // GET: api/<DocumentsController>
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IEnumerable<DocumentDto>> Get()
         {

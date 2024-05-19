@@ -21,7 +21,7 @@ namespace DocHub.WebApi.Controllers
             CategoriesService = categoriesService;
         }
         // GET: api/<DocumentsController>
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IEnumerable<CategoryDto>> Get()
         {

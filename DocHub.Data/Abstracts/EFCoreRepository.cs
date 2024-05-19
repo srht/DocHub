@@ -24,6 +24,7 @@ namespace DocHub.Data.Abstracts
         {
             DocHubDbContext = docHubDbContext;
             Dbset =DocHubDbContext.Set<T>();
+            if(DocHubDbContext.Database.CurrentTransaction == null)
             DocHubTransaction = DocHubDbContext.Database.BeginTransaction();
         }
 
