@@ -55,6 +55,14 @@ namespace DocHub.Data.Repositories
             Commit();
         }
 
-
+        public DDocument GetDocumentById(Guid id)
+        {
+            var foundDoc= Dbset.Find(id);
+            if(foundDoc==null)
+                return null;
+            Dbset.Entry(foundDoc).Collection(d => d.Categories).LoadAsync();
+            Dbset.Entry(foundDoc).Collection(d => d.Tags).LoadAsync();
+            return foundDoc;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using DocHub.Common.Enums;
 using DocHub.Core.Entities;
 using DocHub.Data.Abstracts;
+using DocHub.Data.Migrations;
 using DocHub.Service.Abstracts;
 using Microsoft.Extensions.Logging;
 using System;
@@ -47,7 +48,7 @@ namespace DocHub.Service
 
         public DocumentDto GetDocument(Guid id)
         {
-            var documentDb=DocumentRepository.GetObjectById(id);
+            var documentDb=DocumentRepository.GetDocumentById(id);
             var document = new DocumentDto();
             document.Id=documentDb.Id;
             document.Title = documentDb.Title;
@@ -57,6 +58,7 @@ namespace DocHub.Service
             document.FilePath = documentDb.FilePath;
             document.CreatedAt = documentDb.CreatedAt;  
             document.Tags=documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList();
+            document.Categories = documentDb.Categories?.Select(i => new CategoryDto { Id = i.Id, Name = i.Name })?.ToList();
             return document;
         }
 
@@ -84,10 +86,12 @@ namespace DocHub.Service
             if (documentDto == null || documentDto.Id==null)
                 throw new Exception("No document passed to update");
 
-            var documentDb = DocumentRepository.GetObjectById(documentDto.Id.Value);
+            var documentDb = DocumentRepository.GetDocumentById(documentDto.Id.Value);
             if (documentDb == null)
                 throw new Exception("Document not found with document id: " + documentDto.Id);
 
+            if (documentDb.Categories == null)
+                documentDb.Categories = new List<Category>();
             if(!string.IsNullOrEmpty(documentDto.Title))
             documentDb.Title=documentDto.Title;
             documentDb.UpdatedAt = DateTime.Now;

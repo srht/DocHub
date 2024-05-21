@@ -30,7 +30,7 @@ namespace DocHub.WebApi.Controllers
 
         // GET api/<DocumentsController>/5
         [HttpGet("{id}")]
-        public async Task<DocumentDto> Get(string id)
+        public DocumentDto Get(string id)
         {
             var guid = Guid.Parse(id);
             var foundDocument=DocumentsService.GetDocument(guid);

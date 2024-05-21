@@ -11,5 +11,6 @@ namespace DocHub.Data.Abstracts
     public interface IDocumentRepository:IGenericRepository<DDocument>
     {
         IEnumerable<DDocument> GetList(params string[] includes);
+        DDocument GetDocumentById(Guid id);
     }
 }
