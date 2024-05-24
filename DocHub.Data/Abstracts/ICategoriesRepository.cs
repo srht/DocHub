@@ -9,5 +9,6 @@ namespace DocHub.Data.Abstracts
 {
     public interface ICategoriesRepository:IGenericRepository<Category>
     {
+        List<Category> GetWithSubCategories();
     }
 }

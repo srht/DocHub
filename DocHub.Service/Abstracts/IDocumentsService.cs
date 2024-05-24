@@ -10,7 +10,7 @@ namespace DocHub.Service.Abstracts
 {
     public interface IDocumentsService
     {
-        List<DocumentDto> GetDocuments();
+        List<DocumentDto> GetDocuments(string query);
         DocumentDto GetDocument(Guid id);
         void AddDocument(DocumentDto document);
         void UpdateDocument(DocumentDto document);

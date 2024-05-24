@@ -5,6 +5,7 @@ using DocHub.Data.Repositories;
 using DocHub.Service;
 using DocHub.Service.Abstracts;
 using DocHub.Service.Abstracts.Users;
+using DocHub.Service.Mappers;
 using DocHub.Service.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -66,6 +67,7 @@ builder.Services.AddAuthentication(options => {
             ),
         };
     });
+builder.Services.AddScoped<ICategoryMapper, CategoryMapper>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();

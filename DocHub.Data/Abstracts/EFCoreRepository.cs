@@ -57,13 +57,13 @@ namespace DocHub.Data.Abstracts
         {
             return Dbset.ToList();
         }
-        public T GetObjectById(Guid id)
+        public virtual T GetObjectById(Guid id)
         {
             var found = Dbset.Find(id);
             return found;
         }
 
-        public T GetObjectByIntId(int id)
+        public virtual T GetObjectByIntId(int id)
         {
             var found = Dbset.Find(id);
             return found;

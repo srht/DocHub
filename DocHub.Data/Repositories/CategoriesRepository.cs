@@ -1,5 +1,6 @@
 ﻿using DocHub.Core.Entities;
 using DocHub.Data.Abstracts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,17 @@ namespace DocHub.Data.Repositories
     {
         public CategoriesRepository(DocHubDbContext docHubDbContext) : base(docHubDbContext)
         {
+        }
+
+        public List<Category> GetWithSubCategories()
+        {
+            return Dbset.Include("SubCategories").ToList();
+        }
+
+        public override Category GetObjectByIntId(int id)
+        {
+            var found = Dbset.Include("Parent").FirstOrDefault(i=>i.Id==id);
+            return found;
         }
 
         public override void SoftDelete(Guid id)

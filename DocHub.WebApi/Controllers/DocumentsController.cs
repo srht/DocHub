@@ -22,10 +22,10 @@ namespace DocHub.WebApi.Controllers
         }
         // GET: api/<DocumentsController>
         //[Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<IEnumerable<DocumentDto>> Get()
+        [HttpGet("list")]
+        public async Task<IEnumerable<DocumentDto>> List(string q="")
         {
-            return DocumentsService.GetDocuments().ToList();
+            return DocumentsService.GetDocuments(q).ToList();
         }
 
         // GET api/<DocumentsController>/5

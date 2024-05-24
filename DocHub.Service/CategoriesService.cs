@@ -3,6 +3,7 @@ using DocHub.Common.Enums;
 using DocHub.Core.Entities;
 using DocHub.Data.Abstracts;
 using DocHub.Service.Abstracts;
+using DocHub.Service.Mappers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,20 +16,21 @@ namespace DocHub.Service
 {
     public class CategoriesService : ICategoriesService
     {
-        public CategoriesService(ICategoriesRepository categoriesRepository)
+        public CategoriesService(ICategoriesRepository categoriesRepository, ICategoryMapper categoryMapper)
         {
             CategoriesRepository = categoriesRepository;
+            CategoryMapper = categoryMapper;
         }
 
         public ILogger Logger { get; }
         public ICategoriesRepository CategoriesRepository { get; }
+        public ICategoryMapper CategoryMapper { get; }
 
         public void AddCategory(CategoryDto categoryDto)
         {
-           var categoryDb = new Category();
             var parentCategoryDb = categoryDto.Parent!=null? CategoriesRepository.GetObjectByIntId(categoryDto.Parent.Id):null;
+            var categoryDb = CategoryMapper.GetDb(categoryDto);
             categoryDb.Parent = parentCategoryDb;
-            categoryDb.Name=categoryDto.Name;
 
             CategoriesRepository.Insert(categoryDb);
            
@@ -42,29 +44,14 @@ namespace DocHub.Service
         public CategoryDto GetCategoryDto(int id)
         {
             var categoryDb=CategoriesRepository.GetObjectByIntId(id);
-            var parentCategoryDb=CategoriesRepository.GetObjectByIntId(categoryDb.Parent.Id);
-            var parentCategoryDto = new CategoryDto();
-            parentCategoryDto = new CategoryDto
-            {
-                Id=parentCategoryDb.Id,
-                Name=parentCategoryDb.Name
-            };
 
-            var categoryDto = new CategoryDto();
-            categoryDto.Id=categoryDb.Id;
-            categoryDto.Parent = parentCategoryDto;
-            categoryDto.Name = categoryDb.Name;
-            categoryDto.SubCategories=categoryDb?.SubCategories?.Select(i=>new CategoryDto { Id=i.Id, Name=i.Name })?.ToList();
+            var categoryDto= CategoryMapper.GetDto(categoryDb);
             return categoryDto;
         }
 
         public List<CategoryDto> GetCategories()
         {
-            var categories = CategoriesRepository.GetList().Where(i=>!i.IsDeleted).Select(categoryDb => new CategoryDto
-            {
-                Id= categoryDb.Id,
-                Name=categoryDb.Name,
-            }).ToList();
+            var categories = CategoriesRepository.GetWithSubCategories().Where(i=>!i.IsDeleted).Select(categoryDb => CategoryMapper.GetDto(categoryDb)).ToList();
 
             return categories;
         }
@@ -75,6 +62,10 @@ namespace DocHub.Service
             var categoryDb = CategoriesRepository.GetObjectByIntId(categoryDto.Id);
             if(!string.IsNullOrEmpty(categoryDto.Name))
             categoryDb.Name=categoryDto.Name;
+            if (categoryDto.Parent != null) {
+                var parentCat= CategoriesRepository.GetObjectByIntId(categoryDto.Parent.Id);
+                categoryDb.Parent = parentCat;
+                    }
            
             CategoriesRepository.Update(categoryDb);
         }

@@ -62,9 +62,9 @@ namespace DocHub.Service
             return document;
         }
 
-        public List<DocumentDto> GetDocuments()
+        public List<DocumentDto> GetDocuments(string query="")
         {
-            var documents = DocumentRepository.GetList("Tags","Categories").Where(i=>!i.IsDeleted).Select(documentDb => new DocumentDto
+            var documents = DocumentRepository.GetList("Tags","Categories").Where(i=>i.Title.Contains(query)).Where(i=>!i.IsDeleted).Select(documentDb => new DocumentDto
             {
                 Id=documentDb.Id,
                 Title=documentDb.Title,
