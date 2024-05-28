@@ -1,4 +1,5 @@
-﻿using DocHub.Common.DTO;
+﻿using AutoMapper;
+using DocHub.Common.DTO;
 using DocHub.Common.Enums;
 using DocHub.Core.Entities;
 using DocHub.Data.Abstracts;
@@ -16,7 +17,7 @@ namespace DocHub.Service
 {
     public class CategoriesService : ICategoriesService
     {
-        public CategoriesService(ICategoriesRepository categoriesRepository, ICategoryMapper categoryMapper)
+        public CategoriesService(ICategoriesRepository categoriesRepository, IMapper categoryMapper)
         {
             CategoriesRepository = categoriesRepository;
             CategoryMapper = categoryMapper;
@@ -24,12 +25,12 @@ namespace DocHub.Service
 
         public ILogger Logger { get; }
         public ICategoriesRepository CategoriesRepository { get; }
-        public ICategoryMapper CategoryMapper { get; }
+        public IMapper CategoryMapper { get; }
 
         public void AddCategory(CategoryDto categoryDto)
         {
             var parentCategoryDb = categoryDto.Parent!=null? CategoriesRepository.GetObjectByIntId(categoryDto.Parent.Id):null;
-            var categoryDb = CategoryMapper.GetDb(categoryDto);
+            var categoryDb = CategoryMapper.Map<Category>(categoryDto);
             categoryDb.Parent = parentCategoryDb;
 
             CategoriesRepository.Insert(categoryDb);
@@ -45,13 +46,13 @@ namespace DocHub.Service
         {
             var categoryDb=CategoriesRepository.GetObjectByIntId(id);
 
-            var categoryDto= CategoryMapper.GetDto(categoryDb);
+            var categoryDto= CategoryMapper.Map<CategoryDto>(categoryDb);
             return categoryDto;
         }
 
         public List<CategoryDto> GetCategories()
         {
-            var categories = CategoriesRepository.GetWithSubCategories().Where(i=>!i.IsDeleted).Select(categoryDb => CategoryMapper.GetDto(categoryDb)).ToList();
+            var categories = CategoriesRepository.GetWithSubCategories().Where(i=>!i.IsDeleted).Select(categoryDb => CategoryMapper.Map<CategoryDto>(categoryDb)).ToList();
 
             return categories;
         }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -67,7 +68,6 @@ builder.Services.AddAuthentication(options => {
             ),
         };
     });
-builder.Services.AddScoped<ICategoryMapper, CategoryMapper>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();
@@ -75,6 +75,7 @@ builder.Services.AddScoped<IDocumentsService, DocumentService>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddAutoMapper(a=>a.AddProfile<CategoryMapper>());
 builder.Services.AddSingleton<IFileStoreService>(fileService=>new FileStoreService(Directory.GetCurrentDirectory()));
 builder.Services.AddCors(options =>
 {
@@ -92,6 +93,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    opt.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.IgnoreCycles;
 }); 
 
 var app = builder.Build();

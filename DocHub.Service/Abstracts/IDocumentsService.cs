@@ -11,6 +11,7 @@ namespace DocHub.Service.Abstracts
     public interface IDocumentsService
     {
         List<DocumentDto> GetDocuments(string query);
+        List<DocumentDto> GetDocumentsByCategory(int categoryId);
         DocumentDto GetDocument(Guid id);
         void AddDocument(DocumentDto document);
         void UpdateDocument(DocumentDto document);

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DocHub.Service
 {
@@ -80,6 +81,24 @@ namespace DocHub.Service
             return documents;
         }
 
+        public List<DocumentDto> GetDocumentsByCategory(int categoryId)
+        {
+            var documents = DocumentRepository.GetList("Tags", "Categories")
+                .Where(i => i.Categories.Any(c=>c.Id==categoryId)).Where(i => !i.IsDeleted).Select(documentDb => new DocumentDto
+            {
+                Id = documentDb.Id,
+                Title = documentDb.Title,
+                UpdatedAt = documentDb.UpdatedAt,
+                DocumentType = documentDb.DocumentType,
+                Description = documentDb.Description,
+                FilePath = documentDb.FilePath,
+                CreatedAt = documentDb.CreatedAt,
+                Tags = documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList(),
+                Categories = documentDb.Categories?.Select(i => new CategoryDto { Id = i.Id, Name = i.Name })?.ToList(),
+            }).ToList();
+
+            return documents;
+        }
 
         public void UpdateDocument(DocumentDto documentDto)
         {

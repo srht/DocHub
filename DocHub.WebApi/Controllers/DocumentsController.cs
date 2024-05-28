@@ -28,6 +28,15 @@ namespace DocHub.WebApi.Controllers
             return DocumentsService.GetDocuments(q).ToList();
         }
 
+        // GET: api/<DocumentsController>
+        //[Authorize(Roles = "Admin")]
+        [HttpGet("category")]
+        public async Task<IEnumerable<DocumentDto>> Category(int categoryId)
+        {
+            return DocumentsService.GetDocumentsByCategory(categoryId).ToList();
+        }
+
+
         // GET api/<DocumentsController>/5
         [HttpGet("{id}")]
         public DocumentDto Get(string id)
