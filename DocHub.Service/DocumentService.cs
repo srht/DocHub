@@ -1,4 +1,5 @@
-﻿using DocHub.Common.DTO;
+﻿using AutoMapper;
+using DocHub.Common.DTO;
 using DocHub.Common.Enums;
 using DocHub.Core.Entities;
 using DocHub.Data.Abstracts;
@@ -17,26 +18,25 @@ namespace DocHub.Service
 {
     public class DocumentService : IDocumentsService
     {
-        public DocumentService(IDocumentRepository documentRepository, ICategoriesRepository categoriesRepository)
+        public DocumentService(IDocumentRepository documentRepository, ICategoriesRepository categoriesRepository, IMapper mapper)
         {
             DocumentRepository = documentRepository;
             CategoriesRepository = categoriesRepository;
+            Mapper = mapper;
         }
 
         public IDocumentRepository DocumentRepository { get; }
         public ICategoriesRepository CategoriesRepository { get; }
+        public IMapper Mapper { get; }
         public ILogger Logger { get; }
 
         public void AddDocument(DocumentDto documentDto)
         {
             var documentDb = new DDocument();
-            documentDb.Id = Guid.NewGuid();
-            documentDb.Title = documentDto.Title;
+            documentDb = Mapper.Map<DDocument>(documentDto);
+            //documentDb.Id = Guid.NewGuid();
             documentDb.DocumentType = documentDto.DocumentType.HasValue ? documentDto.DocumentType.Value : DocumentTypes.Text;
-            documentDb.Description = documentDto.Description;
-            documentDb.FilePath = documentDto.FilePath;
             documentDb.CreatedAt = DateTime.Now;
-            documentDb.Tags = documentDto.Tags?.Select(i=>new Tag { Id=i.Id, Name=i.Name })?.ToList();
 
             DocumentRepository.Insert(documentDb);
            
@@ -51,32 +51,16 @@ namespace DocHub.Service
         {
             var documentDb=DocumentRepository.GetDocumentById(id);
             var document = new DocumentDto();
-            document.Id=documentDb.Id;
-            document.Title = documentDb.Title;
-            document.UpdatedAt = documentDb.UpdatedAt;
-            document.DocumentType = documentDb.DocumentType;
-            document.Description = documentDb.Description;
-            document.FilePath = documentDb.FilePath;
-            document.CreatedAt = documentDb.CreatedAt;  
-            document.Tags=documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList();
-            document.Categories = documentDb.Categories?.Select(i => new CategoryDto { Id = i.Id, Name = i.Name })?.ToList();
+            document = Mapper.Map<DocumentDto>(documentDb);
             return document;
         }
 
         public List<DocumentDto> GetDocuments(string query="")
         {
-            var documents = DocumentRepository.GetList("Tags","Categories").Where(i=>i.Title.Contains(query)).Where(i=>!i.IsDeleted).Select(documentDb => new DocumentDto
-            {
-                Id=documentDb.Id,
-                Title=documentDb.Title,
-                UpdatedAt = documentDb.UpdatedAt,
-                DocumentType = documentDb.DocumentType,
-                Description = documentDb.Description,
-                FilePath = documentDb.FilePath,
-                CreatedAt = documentDb.CreatedAt,
-                Tags = documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList(),
-                Categories = documentDb.Categories?.Select(i => new CategoryDto { Id = i.Id, Name = i.Name })?.ToList(),
-            }).ToList();
+            query = query.ToLower();
+            var documents = DocumentRepository.GetList("Tags","Categories")
+                .Where(i=>i.Title.ToLower().Contains(query))
+                .Where(i=>!i.IsDeleted).Select(documentDb =>Mapper.Map<DocumentDto>(documentDb)).ToList();
 
             return documents;
         }
@@ -84,18 +68,8 @@ namespace DocHub.Service
         public List<DocumentDto> GetDocumentsByCategory(int categoryId)
         {
             var documents = DocumentRepository.GetList("Tags", "Categories")
-                .Where(i => i.Categories.Any(c=>c.Id==categoryId)).Where(i => !i.IsDeleted).Select(documentDb => new DocumentDto
-            {
-                Id = documentDb.Id,
-                Title = documentDb.Title,
-                UpdatedAt = documentDb.UpdatedAt,
-                DocumentType = documentDb.DocumentType,
-                Description = documentDb.Description,
-                FilePath = documentDb.FilePath,
-                CreatedAt = documentDb.CreatedAt,
-                Tags = documentDb.Tags?.Select(i => new TagDto { Id = i.Id, Name = i.Name })?.ToList(),
-                Categories = documentDb.Categories?.Select(i => new CategoryDto { Id = i.Id, Name = i.Name })?.ToList(),
-            }).ToList();
+                .Where(i => i.Categories.Any(c=>c.Id==categoryId)).Where(i => !i.IsDeleted)
+                .Select(documentDb => Mapper.Map<DocumentDto>(documentDb)).ToList();
 
             return documents;
         }

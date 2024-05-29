@@ -76,6 +76,7 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(a=>a.AddProfile<CategoryMapper>());
+builder.Services.AddAutoMapper(a=>a.AddProfile<DocumentMapper>());
 builder.Services.AddSingleton<IFileStoreService>(fileService=>new FileStoreService(Directory.GetCurrentDirectory()));
 builder.Services.AddCors(options =>
 {
