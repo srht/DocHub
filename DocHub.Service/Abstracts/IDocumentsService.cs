@@ -10,12 +10,12 @@ namespace DocHub.Service.Abstracts
 {
     public interface IDocumentsService
     {
-        List<DocumentDto> GetDocuments(string query);
-        List<DocumentDto> GetDocumentsByCategory(int categoryId);
-        DocumentDto GetDocument(Guid id);
-        void AddDocument(DocumentDto document);
-        void UpdateDocument(DocumentDto document);
-        void DeleteDocument(Guid id);
+        Task<List<DocumentDto>> GetDocumentsAsync(string query);
+        Task<List<DocumentDto>> GetDocumentsByCategoryAsync(int categoryId);
+        Task<DocumentDto> GetDocumentAsync(Guid id);
+        Task AddDocumentAsync(DocumentDto document);
+        Task UpdateDocumentAsync(DocumentDto document);
+        Task DeleteDocumentAsync(Guid id);
         
     }
 }

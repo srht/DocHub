@@ -12,11 +12,11 @@ namespace DocHub.Data.Abstracts
         T GetObjectById(Guid id);
         T GetObjectByIntId(int id);
         void Insert(T obj);
-        void Delete(Guid id);
-        void DeleteByIntId(int id);
-        void SoftDelete(Guid id);
-        void SoftDeleteByIntId(int id);
-        void Update(T obj);
-        bool Commit(bool state = true);
+        Task DeleteAsync(Guid id);
+        Task DeleteByIntIdAsync(int id);
+        Task SoftDeleteAsync(Guid id);
+        Task SoftDeleteByIntIdAsync(int id);
+        Task UpdateAsync(T obj);
+        Task<bool> CommitAsync(bool state = true);
     }
 }

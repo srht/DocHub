@@ -27,7 +27,9 @@ builder.Host.UseSerilog((ctx,lc)=>lc
 builder.Services.AddLogging(loggingBuilder=>
                             loggingBuilder.AddSerilog(dispose:true));
 builder.Services.AddDbContext<DocHubDbContext>(options =>
-           options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString"));
+});
 builder.Services.AddDbContext<AuthorizationDbContext>(options =>
           options.UseSqlServer(builder.Configuration.GetConnectionString("DocHubConnectionString")));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -68,12 +70,13 @@ builder.Services.AddAuthentication(options => {
             ),
         };
     });
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IDocumentRepository,DocumentRepository>();
-builder.Services.AddScoped<IDocumentsService, DocumentService>();
-builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
-builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddTransient<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IDocumentRepository,DocumentRepository>();
+builder.Services.AddTransient<IDocumentsService, DocumentService>();
+builder.Services.AddTransient<ITagsRepository, TagsRepository>();
+builder.Services.AddTransient<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddTransient<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(a=>a.AddProfile<CategoryMapper>());
 builder.Services.AddAutoMapper(a=>a.AddProfile<DocumentMapper>());

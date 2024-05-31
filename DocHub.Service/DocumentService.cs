@@ -18,44 +18,121 @@ namespace DocHub.Service
 {
     public class DocumentService : IDocumentsService
     {
-        public DocumentService(IDocumentRepository documentRepository, ICategoriesRepository categoriesRepository, IMapper mapper)
+        public DocumentService(IDocumentRepository documentRepository, ICategoriesRepository categoriesRepository, ITagsRepository tagsRepository, IMapper mapper)
         {
             DocumentRepository = documentRepository;
             CategoriesRepository = categoriesRepository;
+            TagsRepository = tagsRepository;
             Mapper = mapper;
         }
 
         public IDocumentRepository DocumentRepository { get; }
         public ICategoriesRepository CategoriesRepository { get; }
+        public ITagsRepository TagsRepository { get; }
         public IMapper Mapper { get; }
         public ILogger Logger { get; }
 
-        public void AddDocument(DocumentDto documentDto)
+        public async Task AddDocumentAsync(DocumentDto documentDto)
         {
-            var documentDb = new DDocument();
-            documentDb = Mapper.Map<DDocument>(documentDto);
-            //documentDb.Id = Guid.NewGuid();
+            var documentDb = Mapper.Map<DDocument>(documentDto);
             documentDb.DocumentType = documentDto.DocumentType.HasValue ? documentDto.DocumentType.Value : DocumentTypes.Text;
             documentDb.CreatedAt = DateTime.Now;
+            documentDb.Categories = null;
+            documentDb.Tags = null;
 
-            DocumentRepository.Insert(documentDb);
+            if (documentDto.Tags != null && documentDto.Tags.Any())
+            {
+                documentDb.Tags = new List<Tag>();
+                var broughtTags = documentDto.Tags;
+                foreach (var c in broughtTags)
+                {
+                    var tagDb = TagsRepository.GetObjectByIntId(c.Id);
+                    if (tagDb != null)
+                        documentDb.Tags.Add(tagDb);
+                }
+            }
+
+            if (documentDto.Categories != null && documentDto.Categories.Any())
+            {
+
+                documentDb.Categories = new List<Category>();
+                var broughtCategories = documentDto.Categories;
+                foreach (var c in broughtCategories)
+                {
+                    var categoryDb = CategoriesRepository.GetObjectByIntId(c.Id);
+
+                    if (categoryDb != null)
+                        documentDb.Categories.Add(categoryDb);
+                }
+            }
+
+            await DocumentRepository.InsertAsync(documentDb);
+            
            
         }
 
-        public void DeleteDocument(Guid id)
+        public async Task UpdateDocumentAsync(DocumentDto documentDto)
         {
-            DocumentRepository.SoftDelete(id);
+            if (documentDto == null || documentDto.Id == null)
+                throw new Exception("No document passed to update");
+
+            var documentDb = DocumentRepository.GetDocumentById(documentDto.Id.Value);
+            if (documentDb == null)
+                throw new Exception("Document not found with document id: " + documentDto.Id);
+
+            if (documentDb.Categories == null)
+                documentDb.Categories = new List<Category>();
+            if (!string.IsNullOrEmpty(documentDto.Title))
+                documentDb.Title = documentDto.Title;
+            documentDb.UpdatedAt = DateTime.Now;
+            documentDb.DocumentType = documentDto.DocumentType.HasValue ? documentDto.DocumentType.Value : DocumentTypes.Text;
+            if (!string.IsNullOrEmpty(documentDto.Description))
+                documentDb.Description = documentDto.Description;
+            if (!string.IsNullOrEmpty(documentDto.FilePath))
+                documentDb.FilePath = documentDto.FilePath;
+
+            if (documentDto.Tags != null && documentDto.Tags.Any())
+            {
+                documentDb.Tags = new List<Tag>();
+                var broughtTags = documentDto.Tags;
+                foreach (var c in broughtTags)
+                {
+                    var tagDb = TagsRepository.GetObjectByIntId(c.Id);
+                    if (tagDb != null)
+                        documentDb.Tags.Add(tagDb);
+                }
+            }
+
+            if (documentDto.Categories != null && documentDto.Categories.Any())
+            {
+
+                documentDb.Categories = new List<Category>();
+                var broughtCategories = documentDto.Categories;
+                foreach (var c in broughtCategories)
+                {
+                    var categoryDb = CategoriesRepository.GetObjectByIntId(c.Id);
+
+                    if (categoryDb != null)
+                        documentDb.Categories.Add(categoryDb);
+                }
+            }
+
+            await DocumentRepository.UpdateAsync(documentDb);
         }
 
-        public DocumentDto GetDocument(Guid id)
+        public async Task DeleteDocumentAsync(Guid id)
+        {
+            await DocumentRepository.SoftDeleteAsync(id);
+        }
+
+        public async Task<DocumentDto> GetDocumentAsync(Guid id)
         {
             var documentDb=DocumentRepository.GetDocumentById(id);
-            var document = new DocumentDto();
-            document = Mapper.Map<DocumentDto>(documentDb);
+            var document = Mapper.Map<DocumentDto>(documentDb);
             return document;
         }
 
-        public List<DocumentDto> GetDocuments(string query="")
+        public async Task<List<DocumentDto>> GetDocumentsAsync(string query="")
         {
             query = query.ToLower();
             var documents = DocumentRepository.GetList("Tags","Categories")
@@ -65,7 +142,7 @@ namespace DocHub.Service
             return documents;
         }
 
-        public List<DocumentDto> GetDocumentsByCategory(int categoryId)
+        public async Task<List<DocumentDto>> GetDocumentsByCategoryAsync(int categoryId)
         {
             var documents = DocumentRepository.GetList("Tags", "Categories")
                 .Where(i => i.Categories.Any(c=>c.Id==categoryId)).Where(i => !i.IsDeleted)
@@ -74,39 +151,6 @@ namespace DocHub.Service
             return documents;
         }
 
-        public void UpdateDocument(DocumentDto documentDto)
-        {
-            if (documentDto == null || documentDto.Id==null)
-                throw new Exception("No document passed to update");
-
-            var documentDb = DocumentRepository.GetDocumentById(documentDto.Id.Value);
-            if (documentDb == null)
-                throw new Exception("Document not found with document id: " + documentDto.Id);
-
-            if (documentDb.Categories == null)
-                documentDb.Categories = new List<Category>();
-            if(!string.IsNullOrEmpty(documentDto.Title))
-            documentDb.Title=documentDto.Title;
-            documentDb.UpdatedAt = DateTime.Now;
-            documentDb.DocumentType = documentDto.DocumentType.HasValue? documentDto.DocumentType.Value:DocumentTypes.Text;
-            if (!string.IsNullOrEmpty(documentDto.Description))
-                documentDb.Description = documentDto.Description;
-            if (!string.IsNullOrEmpty(documentDto.FilePath))
-                documentDb.FilePath = documentDto.FilePath;
-            if (documentDto.Tags != null && documentDto.Tags.Any())
-                documentDb.Tags = documentDto?.Tags?.Select(i => new Tag { Id = i.Id, Name = i.Name }).ToList();
-            
-            if (documentDto.Categories != null && documentDto.Categories.Any()) {
-                var broughtCategories = documentDto.Categories;
-                foreach (var c in broughtCategories)
-                {
-                    var categoryDb = CategoriesRepository.GetObjectByIntId(c.Id);
-                    if(categoryDb!=null)
-                    documentDb.Categories.Add(categoryDb);
-                }
-            }
-
-            DocumentRepository.Update(documentDb);
-        }
+      
     }
 }

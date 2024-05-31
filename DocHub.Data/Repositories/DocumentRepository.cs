@@ -30,29 +30,29 @@ namespace DocHub.Data.Repositories
             return listQuery.ToList();
         }
 
-        public override void SoftDelete(Guid id)
+        public override async Task SoftDeleteAsync(Guid id)
         {
             var found=Dbset.Find(id);
             found.IsDeleted= true;
-            Commit();
+            await CommitAsync();
         }
 
-        public override void SoftDeleteByIntId(int id)
+        public override async Task SoftDeleteByIntIdAsync(int id)
         {
             var found = Dbset.Find(id);
             found.IsDeleted = true;
-            Commit();
+            await CommitAsync();
         }
 
-        public override void Update(DDocument obj)
+        public async Task InsertAsync(DDocument obj)
+        {
+            Dbset.Add(obj);
+            await CommitAsync();
+        }
+        public override async Task UpdateAsync(DDocument obj)
         {
             Dbset.Update(obj);
-            Commit();
-        }
-
-        public void PatchDocument(DDocument obj)
-        {
-            Commit();
+            await CommitAsync();
         }
 
         public DDocument GetDocumentById(Guid id)

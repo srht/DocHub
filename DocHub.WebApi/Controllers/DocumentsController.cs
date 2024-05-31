@@ -25,7 +25,7 @@ namespace DocHub.WebApi.Controllers
         [HttpGet("list")]
         public async Task<IEnumerable<DocumentDto>> List(string q="")
         {
-            return DocumentsService.GetDocuments(q).ToList();
+            return await DocumentsService.GetDocumentsAsync(q);
         }
 
         // GET: api/<DocumentsController>
@@ -33,16 +33,16 @@ namespace DocHub.WebApi.Controllers
         [HttpGet("category")]
         public async Task<IEnumerable<DocumentDto>> Category(int categoryId)
         {
-            return DocumentsService.GetDocumentsByCategory(categoryId).ToList();
+            return await DocumentsService.GetDocumentsByCategoryAsync(categoryId);
         }
 
 
         // GET api/<DocumentsController>/5
         [HttpGet("{id}")]
-        public DocumentDto Get(string id)
+        public async Task<DocumentDto> Get(string id)
         {
             var guid = Guid.Parse(id);
-            var foundDocument=DocumentsService.GetDocument(guid);
+            var foundDocument=await DocumentsService.GetDocumentAsync(guid);
             return foundDocument;
         }
 
@@ -55,14 +55,14 @@ namespace DocHub.WebApi.Controllers
         [HttpPost]
         public async Task Post([FromBody] DocumentDto value)
         {
-            DocumentsService.AddDocument(value);
+            await DocumentsService.AddDocumentAsync(value);
         }
 
         // PUT api/<DocumentsController>/5
         [HttpPut("{id}")]
         public async Task Put(string id, [FromBody] DocumentDto value)
         {
-            DocumentsService.UpdateDocument(value);
+           await DocumentsService.UpdateDocumentAsync(value);
         }
 
         // DELETE api/<DocumentsController>/5
@@ -70,7 +70,7 @@ namespace DocHub.WebApi.Controllers
         public async Task Delete(string id)
         {
             var guid = Guid.Parse(id);
-            DocumentsService.DeleteDocument(guid);
+            await DocumentsService.DeleteDocumentAsync(guid);
         }
     }
 }

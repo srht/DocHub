@@ -26,20 +26,25 @@ namespace DocHub.Data.Repositories
             return found;
         }
 
-        public override void SoftDelete(Guid id)
+        public void Attach(Category category)
+        {
+            Dbset.Attach(category);
+        }
+
+        public override Task SoftDeleteAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public override void SoftDeleteByIntId(int id)
+        public override Task SoftDeleteByIntIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public override void Update(Category obj)
+        public override async Task UpdateAsync(Category obj)
         {
             Dbset.Update(obj);
-            Commit();
+            await CommitAsync();
         }
     }
 }

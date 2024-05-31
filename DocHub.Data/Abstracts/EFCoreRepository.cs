@@ -12,7 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DocHub.Data.Abstracts
 {
-    public abstract class EFCoreRepository<T> : IDisposable, IGenericRepository<T> where T : class
+    public abstract class EFCoreRepository<T> : IGenericRepository<T> where T : class
     {
         private bool DbContextDisposed;
         public DbSet<T> Dbset { get; }
@@ -25,8 +25,8 @@ namespace DocHub.Data.Abstracts
         {
             DocHubDbContext = docHubDbContext;
             Dbset =DocHubDbContext.Set<T>();
-            if(DocHubDbContext.Database.CurrentTransaction == null)
-            DocHubTransaction = DocHubDbContext.Database.BeginTransaction();
+            //if(DocHubDbContext.Database.CurrentTransaction == null)
+            //DocHubTransaction = DocHubDbContext.Database.BeginTransaction();
         }
 
         public IQueryable<T> GetAll()
@@ -39,18 +39,18 @@ namespace DocHub.Data.Abstracts
             return Dbset.Where(predicate);
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             var found = Dbset.Find(id);
             Dbset.Remove(found);
-            Commit();
+            await CommitAsync();
         }
 
-        public void DeleteByIntId(int id)
+        public async Task DeleteByIntIdAsync(int id)
         {
             var found = Dbset.Find(id);
             Dbset.Remove(found);
-            Commit();
+            await CommitAsync();
         }
 
         public IEnumerable<T> GetList()
@@ -69,12 +69,11 @@ namespace DocHub.Data.Abstracts
             return found;
         }
 
-        public void Insert(T obj)
+        public virtual void Insert(T obj)
         {
             Dbset.Add(obj);
-            Commit();
         }
-
+        /*
         protected virtual void Dispose(bool disposing)
         {
             if (!DbContextDisposed)
@@ -87,47 +86,41 @@ namespace DocHub.Data.Abstracts
 
             DbContextDisposed = true;
         }
+        */
 
-         int SaveChanges()
+        async Task<int> SaveChanges()
         {
-            var result = DocHubDbContext.SaveChanges();
+            var result = await DocHubDbContext.SaveChangesAsync();
             return result;
         }
 
-        public bool Commit(bool state = true)
+        public async Task<bool> CommitAsync(bool state = true)
         {
             try
             {
-                SaveChanges();
+                int result = await SaveChanges();
+                return result>0;
+                /*
                 if (state)
                     DocHubTransaction.Commit();
                 else
                     DocHubTransaction.Rollback();
                 return true;
+                */
             }
             catch (Exception ex)
             {
-                DocHubTransaction.Rollback();
+                //DocHubTransaction.Rollback();
                 //Logger.LogError(exception: ex,null);
                 return false;
             }
-            finally
-            {
-                Dispose(true);
-            }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        public abstract Task SoftDeleteAsync(Guid id);
 
-        public abstract void SoftDelete(Guid id);
+        public abstract Task SoftDeleteByIntIdAsync(int id);
 
-        public abstract void SoftDeleteByIntId(int id);
-
-        public abstract void Update(T obj);
+        public abstract Task UpdateAsync(T obj);
 
     }
 }

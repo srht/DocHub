@@ -37,9 +37,9 @@ namespace DocHub.Service
            
         }
 
-        public void DeleteCategory(int id)
+        public async void DeleteCategory(int id)
         {
-            CategoriesRepository.DeleteByIntId(id);
+           await CategoriesRepository.DeleteByIntIdAsync(id);
         }
 
         public CategoryDto GetCategoryDto(int id)
@@ -58,7 +58,7 @@ namespace DocHub.Service
         }
 
 
-        public void UpdateCategory(CategoryDto categoryDto)
+        public async void UpdateCategory(CategoryDto categoryDto)
         {
             var categoryDb = CategoriesRepository.GetObjectByIntId(categoryDto.Id);
             if(!string.IsNullOrEmpty(categoryDto.Name))
@@ -68,7 +68,7 @@ namespace DocHub.Service
                 categoryDb.Parent = parentCat;
                     }
            
-            CategoriesRepository.Update(categoryDb);
+            await CategoriesRepository.UpdateAsync(categoryDb);
         }
     }
 }

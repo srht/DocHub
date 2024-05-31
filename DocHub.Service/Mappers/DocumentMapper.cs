@@ -13,8 +13,7 @@ namespace DocHub.Service.Mappers
     public class DocumentMapper:Profile
     {
         public DocumentMapper() {
-            CreateMap<DDocument, DocumentDto>()
-                .ReverseMap();
+            CreateMap<DDocument, DocumentDto>().ReverseMap();
         }
     }
 }

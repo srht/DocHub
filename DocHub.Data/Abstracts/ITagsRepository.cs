@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace DocHub.Data.Abstracts
 {
-    public interface ICategoriesRepository:IGenericRepository<Category>
+    public interface ITagsRepository:IGenericRepository<Tag>
     {
-        List<Category> GetWithSubCategories();
-        void Attach(Category category);
     }
 }
