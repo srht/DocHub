@@ -11,5 +11,7 @@ namespace DocHub.Data.Abstracts
     {
         List<Category> GetWithSubCategories();
         void Attach(Category category);
+        Task InsertAsync(Category category);
+        Task<Category> GetObjectByIntIdAsync(int id);
     }
 }

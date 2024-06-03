@@ -9,5 +9,6 @@ namespace DocHub.Data.Abstracts
 {
     public interface ITagsRepository:IGenericRepository<Tag>
     {
+        Task<Tag> GetObjectByIntIdAsync(int id);
     }
 }

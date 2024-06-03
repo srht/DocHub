@@ -45,14 +45,14 @@ namespace DocHub.WebApi.Controllers
         [HttpPost]
         public async Task Post([FromBody] CategoryDto value)
         {
-            CategoriesService.AddCategory(value);
+            await CategoriesService.AddCategory(value);
         }
 
         // PUT api/<DocumentsController>/5
         [HttpPut("{id}")]
         public async Task Put(int id, [FromBody] CategoryDto value)
         {
-            CategoriesService.UpdateCategory(value);
+            await CategoriesService.UpdateCategory(value);
         }
 
         // DELETE api/<DocumentsController>/5

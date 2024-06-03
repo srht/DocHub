@@ -12,8 +12,8 @@ namespace DocHub.Service.Abstracts
     {
         List<CategoryDto> GetCategories();
         CategoryDto GetCategoryDto(int id);
-        void AddCategory(CategoryDto categoryDto);
-        void UpdateCategory(CategoryDto categoryDto);
+        Task AddCategory(CategoryDto categoryDto);
+        Task UpdateCategory(CategoryDto categoryDto);
         void DeleteCategory(int id);
         
     }

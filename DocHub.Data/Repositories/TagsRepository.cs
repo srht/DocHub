@@ -1,5 +1,6 @@
 ﻿using DocHub.Core.Entities;
 using DocHub.Data.Abstracts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace DocHub.Data.Repositories
     {
         public TagsRepository(DocHubDbContext docHubDbContext) : base(docHubDbContext)
         {
+        }
+
+        public async Task<Tag> GetObjectByIntIdAsync(int id)
+        {
+            var tag = await Dbset.Where(i=>i.Id==id).FirstOrDefaultAsync();
+            return tag;
         }
 
         public override Task SoftDeleteAsync(Guid id)

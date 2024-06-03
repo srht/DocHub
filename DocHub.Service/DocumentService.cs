@@ -46,7 +46,7 @@ namespace DocHub.Service
                 var broughtTags = documentDto.Tags;
                 foreach (var c in broughtTags)
                 {
-                    var tagDb = TagsRepository.GetObjectByIntId(c.Id);
+                    var tagDb = await TagsRepository.GetObjectByIntIdAsync(c.Id);
                     if (tagDb != null)
                         documentDb.Tags.Add(tagDb);
                 }
@@ -59,7 +59,7 @@ namespace DocHub.Service
                 var broughtCategories = documentDto.Categories;
                 foreach (var c in broughtCategories)
                 {
-                    var categoryDb = CategoriesRepository.GetObjectByIntId(c.Id);
+                    var categoryDb = await CategoriesRepository.GetObjectByIntIdAsync(c.Id);
 
                     if (categoryDb != null)
                         documentDb.Categories.Add(categoryDb);
@@ -76,7 +76,7 @@ namespace DocHub.Service
             if (documentDto == null || documentDto.Id == null)
                 throw new Exception("No document passed to update");
 
-            var documentDb = DocumentRepository.GetDocumentById(documentDto.Id.Value);
+            var documentDb = await DocumentRepository.GetDocumentByIdAsync(documentDto.Id.Value);
             if (documentDb == null)
                 throw new Exception("Document not found with document id: " + documentDto.Id);
 
@@ -97,7 +97,7 @@ namespace DocHub.Service
                 var broughtTags = documentDto.Tags;
                 foreach (var c in broughtTags)
                 {
-                    var tagDb = TagsRepository.GetObjectByIntId(c.Id);
+                    var tagDb = await TagsRepository.GetObjectByIntIdAsync(c.Id);
                     if (tagDb != null)
                         documentDb.Tags.Add(tagDb);
                 }
@@ -110,7 +110,7 @@ namespace DocHub.Service
                 var broughtCategories = documentDto.Categories;
                 foreach (var c in broughtCategories)
                 {
-                    var categoryDb = CategoriesRepository.GetObjectByIntId(c.Id);
+                    var categoryDb = await CategoriesRepository.GetObjectByIntIdAsync(c.Id);
 
                     if (categoryDb != null)
                         documentDb.Categories.Add(categoryDb);

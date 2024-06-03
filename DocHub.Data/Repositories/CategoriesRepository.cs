@@ -46,5 +46,17 @@ namespace DocHub.Data.Repositories
             Dbset.Update(obj);
             await CommitAsync();
         }
+
+        public async Task InsertAsync(Category category)
+        {
+            Dbset.Add(category);
+            await CommitAsync();
+        }
+
+        public async Task<Category> GetObjectByIntIdAsync(int id)
+        {
+            var found = await Dbset.Include("Parent").FirstOrDefaultAsync(i => i.Id == id);
+            return found;
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace DocHub.Data.Abstracts
     {
         IEnumerable<DDocument> GetList(params string[] includes);
         DDocument GetDocumentById(Guid id);
+        Task<DDocument> GetDocumentByIdAsync(Guid id);
         Task InsertAsync(DDocument obj);
     }
 }

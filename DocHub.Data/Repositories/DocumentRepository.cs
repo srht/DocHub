@@ -64,5 +64,15 @@ namespace DocHub.Data.Repositories
             Dbset.Entry(foundDoc).Collection(d => d.Tags).LoadAsync();
             return foundDoc;
         }
+
+        public async Task<DDocument> GetDocumentByIdAsync(Guid id)
+        {
+            var foundDoc = Dbset.Find(id);
+            if (foundDoc == null)
+                return null;
+           await Dbset.Entry(foundDoc).Collection(d => d.Categories).LoadAsync();
+           await Dbset.Entry(foundDoc).Collection(d => d.Tags).LoadAsync();
+            return foundDoc;
+        }
     }
 }

@@ -27,14 +27,13 @@ namespace DocHub.Service
         public ICategoriesRepository CategoriesRepository { get; }
         public IMapper CategoryMapper { get; }
 
-        public void AddCategory(CategoryDto categoryDto)
+        public async Task AddCategory(CategoryDto categoryDto)
         {
             var parentCategoryDb = categoryDto.Parent!=null? CategoriesRepository.GetObjectByIntId(categoryDto.Parent.Id):null;
             var categoryDb = CategoryMapper.Map<Category>(categoryDto);
             categoryDb.Parent = parentCategoryDb;
 
-            CategoriesRepository.Insert(categoryDb);
-           
+           await CategoriesRepository.InsertAsync(categoryDb);
         }
 
         public async void DeleteCategory(int id)
@@ -58,7 +57,7 @@ namespace DocHub.Service
         }
 
 
-        public async void UpdateCategory(CategoryDto categoryDto)
+        public async Task UpdateCategory(CategoryDto categoryDto)
         {
             var categoryDb = CategoriesRepository.GetObjectByIntId(categoryDto.Id);
             if(!string.IsNullOrEmpty(categoryDto.Name))
