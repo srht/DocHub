@@ -30,6 +30,17 @@ namespace DocHub.Data.Repositories
             return listQuery.ToList();
         }
 
+        public IQueryable<DDocument> QueryList(params string[] includes)
+        {
+            var listQuery = Dbset.AsQueryable();
+            foreach (string include in includes)
+            {
+                listQuery = listQuery.Include(include);
+            }
+
+            return listQuery;
+        }
+
         public override async Task SoftDeleteAsync(Guid id)
         {
             var found=Dbset.Find(id);

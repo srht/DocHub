@@ -97,8 +97,9 @@ namespace DocHub.Service
                 var broughtTags = documentDto.Tags;
                 foreach (var c in broughtTags)
                 {
-                    var tagDb = await TagsRepository.GetObjectByIntIdAsync(c.Id);
-                    if (tagDb != null)
+                    var tagDb = await TagsRepository.GetObjectByNameAsync(c.Name);
+                    if (tagDb == null)
+                        tagDb = new Tag { Name = c.Name };
                         documentDb.Tags.Add(tagDb);
                 }
             }
@@ -135,8 +136,8 @@ namespace DocHub.Service
         public async Task<List<DocumentDto>> GetDocumentsAsync(string query="")
         {
             query = query.ToLower();
-            var documents = DocumentRepository.GetList("Tags","Categories")
-                .Where(i=>i.Title.ToLower().Contains(query))
+            var documents = DocumentRepository.QueryList("Tags","Categories")
+                .Where(i=>i.Title.ToLower().Contains(query)|| i.Tags.Any(t => t.Name.ToLower().Contains(query)))
                 .Where(i=>!i.IsDeleted).Select(documentDb =>Mapper.Map<DocumentDto>(documentDb)).ToList();
 
             return documents;

@@ -10,10 +10,10 @@ using DocHub.Data.Repositories;
 
 namespace DocHub.Service.Mappers
 {
-    public class TagMapper:Profile
+    public class CategoryMapper:Profile
     {
-        public TagMapper() {
-            CreateMap<Tag, TagDto>()
+        public CategoryMapper() {
+            CreateMap<Category, CategoryDto>()
                 .ReverseMap();
         }
     }

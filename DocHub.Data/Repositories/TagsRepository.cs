@@ -21,6 +21,12 @@ namespace DocHub.Data.Repositories
             return tag;
         }
 
+        public async Task<Tag> GetObjectByNameAsync(string name)
+        {
+            var tag = await Dbset.Where(i => i.Name == name).FirstOrDefaultAsync();
+            return tag;
+        }
+
         public override Task SoftDeleteAsync(Guid id)
         {
             throw new NotImplementedException();

@@ -78,6 +78,7 @@ builder.Services.AddTransient<ITagsRepository, TagsRepository>();
 builder.Services.AddTransient<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddTransient<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddAutoMapper(a=>a.AddProfile<TagMapper>());
 builder.Services.AddAutoMapper(a=>a.AddProfile<CategoryMapper>());
 builder.Services.AddAutoMapper(a=>a.AddProfile<DocumentMapper>());
 builder.Services.AddSingleton<IFileStoreService>(fileService=>new FileStoreService(Directory.GetCurrentDirectory()));
