@@ -13,7 +13,7 @@ namespace DocHub.Common.DTO
         public Guid? Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public string? FilePath { get; set; }
+        public List<string> FilePaths { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public DocumentTypes? DocumentType { get; set; } = DocumentTypes.Text;
         public DateTime? CreatedAt { get; set; }

@@ -40,6 +40,13 @@ namespace DocHub.Service
             documentDb.Categories = null;
             documentDb.Tags = null;
 
+            if (documentDto.FilePaths.Any())
+            {
+                    documentDb.FilePaths = new List<string>();
+
+                documentDb.FilePaths.AddRange(documentDto.FilePaths);
+            }
+
             if (documentDto.Tags != null && documentDto.Tags.Any())
             {
                 documentDb.Tags = new List<Tag>();
@@ -88,8 +95,13 @@ namespace DocHub.Service
             documentDb.DocumentType = documentDto.DocumentType.HasValue ? documentDto.DocumentType.Value : DocumentTypes.Text;
             if (!string.IsNullOrEmpty(documentDto.Description))
                 documentDb.Description = documentDto.Description;
-            if (!string.IsNullOrEmpty(documentDto.FilePath))
-                documentDb.FilePath = documentDto.FilePath;
+            if (documentDto.FilePaths.Any())
+            {
+                if(documentDb.FilePaths==null)
+                documentDb.FilePaths = new List<string>();
+
+                documentDb.FilePaths.AddRange(documentDto.FilePaths);
+            }
 
             if (documentDto.Tags != null && documentDto.Tags.Any())
             {
