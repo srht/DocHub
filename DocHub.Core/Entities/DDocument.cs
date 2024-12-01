@@ -15,7 +15,7 @@ namespace DocHub.Core.Entities
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string? Description { get; set; }
-        public List<string> FilePaths { get; set; }
+        public List<DDocFilePath>? FilePaths { get; set; }
         public List<Tag>? Tags { get; set; }
         public ICollection<Category>? Categories { get; set; }
         public DocumentTypes DocumentType { get; set; } = DocumentTypes.Text;

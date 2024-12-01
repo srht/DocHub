@@ -19,13 +19,14 @@ namespace DocHub.Data.Repositories
 
         public DocHubDbContext DocHubDbContext { get; }
 
-        public IEnumerable<DDocument> GetList(params string[] includes)
+        public List<DDocument> GetList(params string[] includes)
         {
             var listQuery = Dbset.AsQueryable();
             foreach (string include in includes)
             {
                 listQuery = listQuery.Include(include);
             }
+
 
             return listQuery.ToList();
         }

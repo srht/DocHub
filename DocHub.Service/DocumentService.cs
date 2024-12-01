@@ -42,9 +42,10 @@ namespace DocHub.Service
 
             if (documentDto.FilePaths.Any())
             {
-                    documentDb.FilePaths = new List<string>();
+                    documentDb.FilePaths = new List<DDocFilePath>();
 
-                documentDb.FilePaths.AddRange(documentDto.FilePaths);
+                var files = documentDto.FilePaths.Select(i => new DDocFilePath { FilePath = i.FilePath });
+                documentDb.FilePaths.AddRange(files);
             }
 
             if (documentDto.Tags != null && documentDto.Tags.Any())
@@ -97,10 +98,10 @@ namespace DocHub.Service
                 documentDb.Description = documentDto.Description;
             if (documentDto.FilePaths.Any())
             {
-                if(documentDb.FilePaths==null)
-                documentDb.FilePaths = new List<string>();
+                documentDb.FilePaths = new List<DDocFilePath>();
 
-                documentDb.FilePaths.AddRange(documentDto.FilePaths);
+                var files = documentDto.FilePaths.Select(i => new DDocFilePath { FilePath = i.FilePath });
+                documentDb.FilePaths.AddRange(files);
             }
 
             if (documentDto.Tags != null && documentDto.Tags.Any())
@@ -148,20 +149,26 @@ namespace DocHub.Service
         public async Task<List<DocumentDto>> GetDocumentsAsync(string query="")
         {
             query = query.ToLower();
+            var docs = DocumentRepository.QueryList("Tags", "Categories");
+            /*
             var documents = DocumentRepository.QueryList("Tags","Categories")
                 .Where(i=>i.Title.ToLower().Contains(query)|| i.Tags.Any(t => t.Name.ToLower().Contains(query)))
                 .Where(i=>!i.IsDeleted).Select(documentDb =>Mapper.Map<DocumentDto>(documentDb)).ToList();
-
+            */
+            var documents=docs.Select(documentDb => Mapper.Map<DocumentDto>(documentDb)).ToList();
             return documents;
         }
 
-        public async Task<List<DocumentDto>> GetDocumentsByCategoryAsync(int categoryId)
+        public List<DocumentDto> GetDocumentsByCategory(int categoryId)
         {
-            var documents = DocumentRepository.GetList("Tags", "Categories")
-                .Where(i => i.Categories.Any(c=>c.Id==categoryId)).Where(i => !i.IsDeleted)
-                .Select(documentDb => Mapper.Map<DocumentDto>(documentDb)).ToList();
+            var docList = DocumentRepository.GetList("Tags", "Categories");
+            var documents = docList
+                .Where(i => i.Categories.Any(c => c.Id == categoryId)).Where(i => !i.IsDeleted)
+                //.Select(documentDb => Mapper.Map<DocumentDto>(documentDb)).ToList();
+                .ToList();
+            var mappedDocs = documents.Select(d => Mapper.Map<DocumentDto>(d)).ToList();
 
-            return documents;
+            return mappedDocs;
         }
 
       

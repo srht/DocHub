@@ -11,7 +11,7 @@ namespace DocHub.Data.Abstracts
     public interface IDocumentRepository:IGenericRepository<DDocument>
     {
         IQueryable<DDocument> QueryList(params string[] includes);
-        IEnumerable<DDocument> GetList(params string[] includes);
+        List<DDocument> GetList(params string[] includes);
         DDocument GetDocumentById(Guid id);
         Task<DDocument> GetDocumentByIdAsync(Guid id);
         Task InsertAsync(DDocument obj);

@@ -11,7 +11,7 @@ namespace DocHub.Service.Abstracts
     public interface IDocumentsService
     {
         Task<List<DocumentDto>> GetDocumentsAsync(string query);
-        Task<List<DocumentDto>> GetDocumentsByCategoryAsync(int categoryId);
+        List<DocumentDto> GetDocumentsByCategory(int categoryId);
         Task<DocumentDto> GetDocumentAsync(Guid id);
         Task AddDocumentAsync(DocumentDto document);
         Task UpdateDocumentAsync(DocumentDto document);

@@ -31,9 +31,10 @@ namespace DocHub.WebApi.Controllers
         // GET: api/<DocumentsController>
         //[Authorize(Roles = "Admin")]
         [HttpGet("category")]
-        public async Task<IEnumerable<DocumentDto>> Category(int categoryId)
+        public IEnumerable<DocumentDto> Category(int categoryId)
         {
-            return await DocumentsService.GetDocumentsByCategoryAsync(categoryId);
+            var results=  DocumentsService.GetDocumentsByCategory(categoryId);
+            return results;
         }
 
 
