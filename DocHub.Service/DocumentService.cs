@@ -149,7 +149,7 @@ namespace DocHub.Service
         public async Task<List<DocumentDto>> GetDocumentsAsync(string query="")
         {
             query = query.ToLower();
-            var docs = DocumentRepository.QueryList("Tags", "Categories");
+            var docs = DocumentRepository.QueryList("Tags", "Categories", "FilePaths");
             /*
             var documents = DocumentRepository.QueryList("Tags","Categories")
                 .Where(i=>i.Title.ToLower().Contains(query)|| i.Tags.Any(t => t.Name.ToLower().Contains(query)))
@@ -161,7 +161,7 @@ namespace DocHub.Service
 
         public List<DocumentDto> GetDocumentsByCategory(int categoryId)
         {
-            var docList = DocumentRepository.GetList("Tags", "Categories");
+            var docList = DocumentRepository.GetList("Tags", "Categories", "FilePaths");
             var documents = docList
                 .Where(i => i.Categories.Any(c => c.Id == categoryId)).Where(i => !i.IsDeleted)
                 //.Select(documentDb => Mapper.Map<DocumentDto>(documentDb)).ToList();
