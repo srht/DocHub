@@ -79,7 +79,7 @@ namespace DocHub.Service
            
         }
 
-        public async Task UpdateDocumentAsync(DocumentDto documentDto)
+        public async Task<DocumentDto> UpdateDocumentAsync(DocumentDto documentDto)
         {
             if (documentDto == null || documentDto.Id == null)
                 throw new Exception("No document passed to update");
@@ -96,13 +96,15 @@ namespace DocHub.Service
             documentDb.DocumentType = documentDto.DocumentType.HasValue ? documentDto.DocumentType.Value : DocumentTypes.Text;
             if (!string.IsNullOrEmpty(documentDto.Description))
                 documentDb.Description = documentDto.Description;
-            if (documentDto.FilePaths.Any())
+            if (documentDto.FilePaths != null && documentDto.FilePaths.Any())
             {
                 documentDb.FilePaths = new List<DDocFilePath>();
 
                 var files = documentDto.FilePaths.Select(i => new DDocFilePath { FilePath = i.FilePath });
                 documentDb.FilePaths.AddRange(files);
             }
+            else
+                documentDb.FilePaths = new List<DDocFilePath>();
 
             if (documentDto.Tags != null && documentDto.Tags.Any())
             {
@@ -132,6 +134,8 @@ namespace DocHub.Service
             }
 
             await DocumentRepository.UpdateAsync(documentDb);
+            documentDto = Mapper.Map<DocumentDto>(documentDb);
+            return documentDto;
         }
 
         public async Task DeleteDocumentAsync(Guid id)
@@ -149,12 +153,12 @@ namespace DocHub.Service
         public async Task<List<DocumentDto>> GetDocumentsAsync(string query="")
         {
             query = query.ToLower();
-            var docs = DocumentRepository.QueryList("Tags", "Categories", "FilePaths");
-            /*
-            var documents = DocumentRepository.QueryList("Tags","Categories")
-                .Where(i=>i.Title.ToLower().Contains(query)|| i.Tags.Any(t => t.Name.ToLower().Contains(query)))
-                .Where(i=>!i.IsDeleted).Select(documentDb =>Mapper.Map<DocumentDto>(documentDb)).ToList();
-            */
+            //var docs = DocumentRepository.QueryList("Tags", "Categories", "FilePaths");
+
+            var docs = DocumentRepository.QueryList("Tags", "Categories", "FilePaths")
+                .Where(i => i.Title.ToLower().Contains(query) || i.Tags.Any(t => t.Name.ToLower().Contains(query)))
+                .Where(i => !i.IsDeleted).Select(documentDb => Mapper.Map<DocumentDto>(documentDb));
+            
             var documents=docs.Select(documentDb => Mapper.Map<DocumentDto>(documentDb)).ToList();
             return documents;
         }

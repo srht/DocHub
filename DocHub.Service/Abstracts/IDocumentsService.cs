@@ -14,7 +14,7 @@ namespace DocHub.Service.Abstracts
         List<DocumentDto> GetDocumentsByCategory(int categoryId);
         Task<DocumentDto> GetDocumentAsync(Guid id);
         Task AddDocumentAsync(DocumentDto document);
-        Task UpdateDocumentAsync(DocumentDto document);
+        Task<DocumentDto> UpdateDocumentAsync(DocumentDto document);
         Task DeleteDocumentAsync(Guid id);
         
     }

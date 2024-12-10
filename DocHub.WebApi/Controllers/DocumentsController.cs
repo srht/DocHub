@@ -61,9 +61,10 @@ namespace DocHub.WebApi.Controllers
 
         // PUT api/<DocumentsController>/5
         [HttpPut("{id}")]
-        public async Task Put(string id, [FromBody] DocumentDto value)
+        public async Task<DocumentDto> Put(string id, [FromBody] DocumentDto value)
         {
-           await DocumentsService.UpdateDocumentAsync(value);
+           var retval=await DocumentsService.UpdateDocumentAsync(value);
+            return retval;
         }
 
         // DELETE api/<DocumentsController>/5
